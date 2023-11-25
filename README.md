@@ -2,6 +2,8 @@
 
 # min's branch : min
 
+# hyunji's branch : hyunji
+
 # 23_BDP_Final
 
 ### 23.11.13 첫 회의 시작
