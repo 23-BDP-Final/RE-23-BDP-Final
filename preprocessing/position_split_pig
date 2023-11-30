@@ -1,0 +1,22 @@
+content = LOAD '/user/maria_dev/termproject/contents.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',') AS (index:int, position:chararray,     company_name:chararray, description:chararray, requirement:chararray, prefered:chararray, like:int);
+
+back_word = FILTER content BY position matches '.*백엔드.*';
+back = FOREACH back_word GENERATE  index, position, company_name, description, requirement, prefered, like;
+STORE back INTO '/user/maria_dev/termproject/store_csv/position/back' USING PigStorage(',');
+
+front_word = FILTER content BY position matches '.*프론트.*';
+front = FOREACH front_word GENERATE  index, position, company_name, description, requirement, prefered, like;
+STORE front INTO '/user/maria_dev/termproject/store_csv/position/front' USING PigStorage(',');
+
+
+data_word = FILTER content BY position matches '.*데이터.*';
+data = FOREACH data_word GENERATE  index, position, company_name, description, requirement, prefered, like;
+STORE data INTO '/user/maria_dev/termproject/store_csv/position/data' USING PigStorage(',');
+
+
+mobile_word = FILTER content BY position matches '.*모바일.*';
+mobile = FOREACH mobile_word GENERATE  index, position, company_name, description, requirement, prefered, like;
+STORE mobile INTO '/user/maria_dev/termproject/store_csv/position/mobile' USING PigStorage(',');
+
+
+DUMP mobile;
