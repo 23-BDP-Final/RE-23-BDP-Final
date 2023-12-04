@@ -1,0 +1,32 @@
+-- CSV 파일을 로드하여 content 테이블 생성
+Mobile = LOAD '/user/maria_dev/termproject/data/content_mobile.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',') AS (
+    index:int,
+    original_index:int,
+    position:chararray,
+    company_name:chararray,
+    description:chararray,
+    requirement:chararray,
+    prefered:chararray,
+    like:int
+);
+
+-- like 열을 기준으로 내림차순 정렬
+sorted_content = ORDER Mobile BY like DESC;
+
+-- 정렬된 결과를 열별로 묶어서 출력
+sorted_content_grouped = FOREACH sorted_content GENERATE index, original_index, position, company_name, description, requirement, prefered, like;
+
+-- 열별로 묶인 결과를 출력
+DUMP sorted_content_grouped;
+
+-- like 열의 총 합을 계산
+total_likes = FOREACH Mobile GENERATE like;
+total_likes_grouped = GROUP total_likes ALL; -- 모든 행을 하나의 그룹으로 묶음
+
+-- 총 합 계산 및 출력
+total_likes_sum = FOREACH total_likes_grouped GENERATE SUM(total_likes) AS like_sum;
+DUMP total_likes_sum;
+
+-- 결과를 저장
+STORE total_likes_sum INTO 'hdfs:///user/maria_dev/termproject/like/mobile_sum' USING PigStorage(',');
+STORE sorted_content_grouped INTO 'hdfs:///user/maria_dev/termproject/like/sorted_mobile' USING PigStorage(',');
