@@ -1,0 +1,16 @@
+content_back = LOAD 'hdfs:///user/maria_dev/termproject/content_back.csv' USING PigStorage(',') AS (index:int, position:chararray, company_name:chararray, description:chararray, requirement:chararray, preferred:chararray, like:int);
+content_front = LOAD 'hdfs:///user/maria_dev/termproject/content_front.csv' USING PigStorage(',') AS (index:int, position:chararray, company_name:chararray, description:chararray, requirement:chararray, preferred:chararray, like:int);
+content_mobile = LOAD 'hdfs:///user/maria_dev/termproject/content_mobile.csv' USING PigStorage(',') AS (index:int, position:chararray, company_name:chararray, description:chararray, requirement:chararray, preferred:chararray, like:int);
+content_data = LOAD 'hdfs:///user/maria_dev/termproject/content_data.csv' USING PigStorage(',') AS (index:int, position:chararray, company_name:chararray, description:chararray, requirement:chararray, preferred:chararray, like:int);
+
+content_back_count = FOREACH (GROUP content_back ALL) GENERATE 'Backend' AS title, COUNT(content_back) AS count;
+content_front_count = FOREACH (GROUP content_front ALL) GENERATE 'Frontend' AS title, COUNT(content_front) AS count;
+content_mobile_count = FOREACH (GROUP content_mobile ALL) GENERATE 'Mobile' AS title, COUNT(content_mobile) AS count;
+content_data_count = FOREACH (GROUP content_data ALL) GENERATE 'Data' AS title, COUNT(content_data) AS count;
+
+all_counts = UNION content_back_count, content_front_count, content_mobile_count, content_data_count;
+sorted_counts = ORDER all_counts BY count DESC;
+
+DUMP sorted_counts;
+
+STORE sorted_counts INTO 'hdfs:///user/maria_dev/termproject/sorted_counts' USING PigStorage(',');
